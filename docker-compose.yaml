@@ -6,10 +6,10 @@ services:
     build:
       context: ./mysql/
       dockerfile: build/Dockerfile
-    env_file: .env
+    env_file: mysql.env
     volumes:
-      - ../mysql/init:/docker-entrypoint-initdb.d
-      - ../mysql/mysql_data/:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./mysql/mysql_data/:/var/lib/mysql
     ports:
       - 3306:3306
     # 文字コードを触ったりファイルを読み込むおまじない②を書いています
@@ -51,6 +51,6 @@ services:
     ports: 
       - "5044:5044"
       - "9600:9600"
-    env_file: .env
+    env_file: mysql.env
     depends_on: 
       - elasticsearch

@@ -42,13 +42,13 @@ logstash/
   ┣pipeline/
   ┃  ┗log.conf
   ┗index_template.json    # Elasticsearchのインデックス構造を書いたファイル
-(.env)    # 環境変数とか
+(mysql.env)    # 環境変数とか
 docker-compose.yaml
 README.md
 ```
 
 ## Preparation
-- `.env`を作って下記を指定する
+- `mysql.env`を作って下記を指定する
     ```
     MYSQL_HOST=jawiki_db
     MYSQL_PORT=3306
