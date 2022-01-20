@@ -1,0 +1,7 @@
+.env
+.env.db
+
+mysql_data
+
+mysql-connector-java*
+jawiki-20211227-cirrussearch-content.json
