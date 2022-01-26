@@ -16,9 +16,8 @@ CREATE TABLE IF NOT EXISTS jawiki_articles (
 SET @i=0
 
 /* title,textのない行を読むときにめちゃくちゃwarnings出そう */
-LOAD DATA LOCAL INFILE 'jawiki-20211227-cirrussearch-content.json'
-  INTO TABLE jawiki_articles
-  FIELDS TERMINATED BY '\\t'
+LOAD DATA LOCAL INFILE "./docker-entrypoint-initdb.d/jawiki-20211227-cirrussearch-content.json" 
+  INTO TABLE jawiki_articles FIELDS TERMINATED BY '\\t' 
   (@json)
   SET no=(@i:@i+1), title=JSON_EXTRACT(@json, '$.title'), text=JSON_EXTRACT(@json, '$.text');
 
