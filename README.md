@@ -15,6 +15,7 @@
 Logstashは定期的(今回の設定は5秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードをElasticsearchに追加します。
 
 
+
 # Environment 
 
 ## File Structure
@@ -28,6 +29,7 @@ elasticsearch/
 mysql/
   ┣build/
   ┃  ┣Dockerfile
+  ┃  ┣entrypoint.sh
   ┃  ┗my.cnf
   ┣init/    # MySQLのコンテナ起動時に実行されるファイル
   ┃  ┣create_table.sql
@@ -44,6 +46,7 @@ logstash/
   ┗index_template.json    # Elasticsearchのインデックス構造を書いたファイル
 (mysql.env)    # 環境変数とか
 docker-compose.yaml
+docker-compose.ms.yaml  # リソース監視する用
 README.md
 ```
 
