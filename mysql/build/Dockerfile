@@ -12,7 +12,3 @@ ENV LANG="ja_JP.UTF-8" \
     TZ="Asia/Tokyo"
 
 COPY build/my.cnf /etc/mysql/conf.d/my.cnf
-COPY build/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

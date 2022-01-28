@@ -12,7 +12,7 @@
 
 ## Summary
 
-Logstashは定期的(今回の設定は5秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードをElasticsearchに追加します。
+Logstashは定期的(今回の設定は10秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードのみをElasticsearchに反映します。
 
 
 # Environment 
@@ -70,7 +70,7 @@ README.md
 
 # memo
 ## To Do
-- DB上の追加・更新をElasticsearchにも反映させる
+- DB上の追加・更新をElasticsearchに反映させる
 - LogstashとElasticsearchのリソース確認する
 - 既存のDB使う場合に外す・設定する場所の記載
 - ~~DB上の削除はES上で反映されないのなんとかなんないかな~~今回は元のDBで削除することがないので考える必要がなさそう
