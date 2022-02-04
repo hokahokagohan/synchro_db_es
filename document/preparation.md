@@ -23,7 +23,7 @@
     ※LogstashからMySQLに接続する際、SELECT以上の権限を持つユーザーでログインする必要があります。root以外のユーザーでログインするときは`logstash/pipeline/log.conf`の`jdbc_user`と`jdbc_password`を変更してください。この場合MYSQL_ROOT_PASSWORDは記載不要です。
 
 ### 新規にデータベースを作成する場合
-1. `.env`ファイルを作成し、下記の設定を入力します
+1. `mysql.env`ファイルを作成し、下記の設定を入力します
     ```
     MYSQL_HOST=mysql
     MYSQL_PORT=3306
@@ -33,12 +33,16 @@
     MYSQL_ROOT_PASSWORD=（適当）
     ```
 
-2. `mysql/init/`にデータをインストールします。
+2. テスト用データをインストールします。
     ```
-    wget -P mysql/init/ https://dumps.wikimedia.org/other/cirrussearch/current/jawiki-20211227-cirrussearch-content.json.gz
-    gunzip mysql/init/ jawiki-20211227-cirrussearch-content.json.gz 
+    wget -P https://dumps.wikimedia.org/other/cirrussearch/current/jawiki-20211227-cirrussearch-content.json.gz
+    gunzip jawiki-20211227-cirrussearch-content.json.gz 
     ```
-3. 
+
+3. `docker-compose up --build`のあとに`python/register_db.py`を実行します。
+    ```
+    python python/register_db.py
+    ```
 
 ## Logstashの準備
 
@@ -53,5 +57,3 @@
 
 
 # References
-- [APIから取得したJSONをとりあえずMySQL8.0に入れてJSON_TABLE()でどうにかする - 主夫ときどきプログラマ](https://masayuki14.hatenablog.com/entry/2018/10/17/170000) (最終閲覧日:2022/1/19)
-- [MySQLでJSONを扱う - Qiita](https://qiita.com/abcb2/items/8affae03caa3e94068b5) (最終閲覧日:2022/1/19)

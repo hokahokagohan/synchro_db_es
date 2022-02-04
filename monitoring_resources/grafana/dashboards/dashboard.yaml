@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: 'synchro_db_es'
+    orgId: 1
+    folder: ''
+    folderUid: ''
+    type: file
+    updateIntervalSeconds: 10
+    disableDeletion: true
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/
+      folderFromFilesStructure: true

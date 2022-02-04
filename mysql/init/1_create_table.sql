@@ -10,12 +10,12 @@ CREATE TABLE IF NOT EXISTS jawiki_articles (
   PRIMARY KEY(`no`)
 ) ENGINE=MyISAM;
 
-SET @i=0;
+-- SET @i=0;
 
-/* title,textのない行を読むときにめちゃくちゃwarnings出そう */
-LOAD DATA LOCAL INFILE "./docker-entrypoint-initdb.d/jawiki-20211227-cirrussearch-content.json" 
-  INTO TABLE jawiki_articles 
-  FIELDS TERMINATED BY "\t" ESCAPED BY "\\"
-  (@json)
-  SET no=(@i:=@i+1), title=JSON_VALUE(@json, "$.title"), text=JSON_VALUE(@json, "$.text");
+-- /* title,textのない行を読むときにめちゃくちゃwarnings出そう */
+-- LOAD DATA LOCAL INFILE "./docker-entrypoint-initdb.d/jawiki-20211227-cirrussearch-content.json" 
+--   INTO TABLE jawiki_articles 
+--   FIELDS TERMINATED BY "\t" ESCAPED BY "\\"
+--   (@json)
+--   SET no=(@i:=@i+1), title=JSON_VALUE(@json, "$.title"), text=JSON_VALUE(@json, "$.text");
 
