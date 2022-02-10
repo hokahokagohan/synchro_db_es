@@ -15,18 +15,21 @@ services:
     # 文字コードを触ったりファイルを読み込むおまじない②を書いています
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --local-infile=1
 
-  elasticsearch:
+  elasticsearch01:
     container_name: ls_es01
     build: 
       context: ./elasticsearch/
       dockerfile: build/Dockerfile
     environment:
-      - discovery.type=single-node
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es02, ls_es03
       #- node.master=true
       #- node.data=true
       - xpack.security.enabled=false
-      #- bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - TZ=Asia/Tokyo
     ulimits: 
       memlock:
@@ -39,7 +42,56 @@ services:
         max-file: '3'
     ports: 
       - "9200:9200"
-      - "9300:9300"
+    depends_on:
+      - mysql
+    healthcheck:
+      interval: 30s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  elasticsearch02:
+    container_name: ls_es02
+    build: 
+      context: ./elasticsearch/
+      dockerfile: build/Dockerfile
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es01, ls_es03
+      #- node.master=true
+      #- node.data=true
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Tokyo
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+    depends_on:
+      - mysql
+
+  elasticsearch03:
+    container_name: ls_es03
+    build: 
+      context: ./elasticsearch/
+      dockerfile: build/Dockerfile
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es01, ls_es02
+      #- node.master=true
+      #- node.data=true
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Tokyo
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
     depends_on:
       - mysql
 
@@ -49,16 +101,18 @@ services:
       context: ./logstash/
       dockerfile: build/Dockerfile
     ports: 
-      - "5044:5044"
       - "9600:9600"
     env_file: mysql.env
     environment:
       - TZ=Asia/Tokyo
     depends_on: 
-      - elasticsearch
+      - elasticsearch01
+      - elasticsearch02
+      - elasticsearch03
       - mysql
-    # volumes:
-    #   - ./logstash/pipeline:/usr/share/logstash/pipeline
+    volumes:
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
+      - ./logstash/config/:/usr/share/logstash/config/
 
 volumes:
   mysql_data:

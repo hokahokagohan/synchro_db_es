@@ -1,64 +1,6 @@
 version: '3'
 
 services:
-  mysql:
-    container_name: jawiki_db
-    build:
-      context: ./mysql/
-      dockerfile: build/Dockerfile
-    env_file: mysql.env
-    volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
-      - mysql_data/:/var/lib/mysql
-    ports:
-      - 3306:3306
-    # 文字コードを触ったりファイルを読み込むおまじない②を書いています
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --local-infile=1
-
-  elasticsearch:
-    container_name: ls_es01
-    build: 
-      context: ./elasticsearch/
-      dockerfile: build/Dockerfile
-    environment:
-      - discovery.type=single-node
-      #- node.master=true
-      #- node.data=true
-      - xpack.security.enabled=false
-      #- bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
-      - TZ=Asia/Tokyo
-    ulimits: 
-      memlock:
-        soft: -1
-        hard: -1
-    logging: 
-      driver: 'json-file'
-      options: 
-        max-size: '10m'
-        max-file: '3'
-    ports: 
-      - "9200:9200"
-      - "9300:9300"
-    depends_on:
-      - mysql
-
-  logstash:
-    container_name: logstash
-    build: 
-      context: ./logstash/
-      dockerfile: build/Dockerfile
-    ports: 
-      - "5044:5044"
-      - "9600:9600"
-    env_file: mysql.env
-    environment:
-      TZ: Asia/Tokyo
-    depends_on: 
-      - elasticsearch
-      - mysql
-
-
   # 内部監視用
   prometheus:
     image: prom/prometheus
