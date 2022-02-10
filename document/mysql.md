@@ -1,5 +1,8 @@
 # JSONファイルからDockerのMySQLにデータをインポートした
+<<<<<<< HEAD
 備忘録  
+=======
+>>>>>>> monitor_rsrc
 PythonからMySQLのAPI叩いたほうがややこしくないけどPythonを使いたくないときもある（ない）
 
 ## まえがき
@@ -104,7 +107,11 @@ ERROR 2068 (HY000) at line 18: LOAD DATA LOCAL INFILE file request rejected due 
 > LOCAL は、サーバーとクライアントの両方がそれを許可するように構成されている場合にのみ機能します。たとえば、mysqld が --local-infile=0 で起動された場合、LOCAL は機能しません。[セクション6.1.6「LOAD DATA LOCAL のセキュリティーの問題」](https://dev.mysql.com/doc/refman/5.6/ja/load-data-local-security.html)を参照してください。
 
 `LOAD DATA LOCAL INFILE`として使用する場合はサーバーとクライアント側で許可が必要だそうです。  
+<<<<<<< HEAD
 `LOCAL`を外せば済むんか？と思って外すと今度は「`secure-file-priv`オプションが設定されてるのでダメ」という怒られが発生しました。  
+=======
+`LOCAL`を外せば済むんか？と思って外してみると今度は「`secure-file-priv`オプションが設定されてるのでダメ」という怒られが発生しました。  
+>>>>>>> monitor_rsrc
 素直にはじめに言われた許可設定をします。
 
 - サーバー側で`--enable-local-infile`か`--local-infile=1`を設定
@@ -129,9 +136,15 @@ ERROR 2068 (HY000) at line 18: LOAD DATA LOCAL INFILE file request rejected due 
 
 頼むぞ！
 
+<<<<<<< HEAD
 ……と実行したらまた同じエラーが出ました。  
 `SHOW VARIABLES LIKE '%local%'`を叩くと`local_infile=1`になっていたので、参考サイトによるとサーバー側の設定はできているようです。
 MySQLに入って直接`SET PERSIST local_infile=1;`を実行すると下記のエラーが。
+=======
+……と実行したら先ほどと同じエラーが出ました。  
+MySQLに入って`SHOW VARIABLES LIKE '%local%'`を叩くと`local_infile=1`になっていたので、サーバー側の設定はできているようです。  
+クライアント側で直接設定しようと`SET PERSIST local_infile=1;`を実行すると下記のエラーが。
+>>>>>>> monitor_rsrc
 
 ```
 ERROR 1227 (42000): Access denied; you need (at least one of) the SUPER or SYSTEM_VARIABLES_ADMIN privilege(s) for this operation
@@ -139,9 +152,18 @@ ERROR 1227 (42000): Access denied; you need (at least one of) the SUPER or SYSTE
 
 実行ユーザーにlocal_infileを設定する権限がないようです。南無……。
 
+<<<<<<< HEAD
 rootユーザーで実行するのが手っ取り早そうですが、rootで入ったまま起動させておくのも危ない気がするので別の方法を探します。
 
 
+=======
+rootユーザーで実行するのが手っ取り早そうですが、rootで入ったまま起動させておくのも危ない気がするので別の方法を探していたところ、公式にそれっぽい答えがありました。
+
+> オプションファイルから [client] グループを読み取る Perl スクリプトまたはその他のプログラムで LOAD DATA LOCAL を使用する場合、local-infile=1 オプションをそのグループに追加できます。ただし、local-infile を認識しないプログラムで問題が発生しないようにするために、loose- プリフィクスを使用してこれを指定します。  
+> --- [セクション6.1.6「LOAD DATA LOCAL のセキュリティーの問題」](https://dev.mysql.com/doc/refman/5.6/ja/load-data-local-security.html)
+
+オプションファイルから設定すればいいのか〜なるほど！
+>>>>>>> monitor_rsrc
 
 ```
 # my.cnf
@@ -151,7 +173,13 @@ rootユーザーで実行するのが手っ取り早そうですが、rootで入
 loose-local-infile=1
 ```
 
+<<<<<<< HEAD
 順調に進んでいるようです。解決か……？
+=======
+[mysqladmin: [Warning] unknown variable 'loose-local-infile=1'.](https://gihyo.jp/dev/serial/01/mysql-road-construction-news/0033)が出ますが気にしなくて良さそうです。
+
+`my.cnf`に上記を追記して実行したところ順調に進んでいます。これで解決か……！？
+>>>>>>> monitor_rsrc
 
 ## :破
 
@@ -161,10 +189,30 @@ loose-local-infile=1
 ERROR 3141 (22032) at line 18: Invalid JSON text in argument 1 to function json_extract: "Invalid encoding in string." at position 6038.
 ``` 
 
+<<<<<<< HEAD
 
 
 ## :Q
 なんかデータボリュームを使うといいらしい。はえ〜。
+=======
+調べた限りで考えられる原因は以下の３つでした。
+
+1. JSON_EXTRACTの返り値とカラムの型が一致してない
+2. JSONファイルのテキストにエスケープ文字が入ってしまっている
+3. 突っ込むデータの容量がデカすぎる
+
+1.が一番怪しいな〜と思い、ドキュメント等をいろいろ読み漁っていると、`JSON_EXTRACT`の返り値がJSON型であることを知りました。へえ……。~~勝手にキャストとかしてくれてると思ってた。~~  
+また、JSON_EXTRACTの返り値がダブルクォートを含むため、キャストするとダブルクォートがダブるという事態を避けるために`JSON_VALUE`に変更します。
+
+
+
+
+## :Q
+
+
+## シン:||
+
+>>>>>>> monitor_rsrc
 
 
 

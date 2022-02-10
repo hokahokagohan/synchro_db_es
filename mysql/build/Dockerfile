@@ -12,6 +12,7 @@ RUN mkdir /var/log/mysql \
 ENV LANG="ja_JP.UTF-8" \
     TZ="Asia/Tokyo"
 
+<<<<<<< HEAD
 COPY build/my.cnf /etc/mysql/conf.d/my.cnf
 
 
@@ -20,3 +21,6 @@ COPY build/my.cnf /etc/mysql/conf.d/my.cnf
 
 # RUN chmod +x /usr/local/bin/entrypoint.sh
 # ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+=======
+COPY build/my.cnf /etc/mysql/conf.d/my.cnf
+>>>>>>> monitor_rsrc

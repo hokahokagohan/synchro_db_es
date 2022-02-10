@@ -1,0 +1,3 @@
+- pipline.id: mysql_pipeline
+  path.config: "/usr/share/logstash/pipeline/mysql.conf"
+  queue.type: persisted

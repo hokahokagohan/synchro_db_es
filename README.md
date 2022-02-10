@@ -12,7 +12,7 @@
 
 ## Summary
 
-Logstashは定期的(今回の設定は5秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードをElasticsearchに追加します。
+Logstashは定期的(今回の設定は10秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードのみをElasticsearchに反映します。
 
 
 
@@ -60,8 +60,12 @@ README.md
     MYSQL_PASSWORD=(適当)
     MYSQL_ROOT_PASSWORD=(適当)
     ```
-- MySQL, Logstash, Elasticsearchの準備は[こっちを参照](document/preparation.md)
 
+- MySQLとLogstashの接続に必要な`MySQLコネクタ`([MySQL :: Download Connector/J](https://dev.mysql.com/downloads/connector/j/))をインストール
+   ```
+    wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.28.zip
+    unzip mysql-connector-java-8.0.28.zip -d logstash/
+   ```
 
 ---
 
@@ -73,8 +77,8 @@ README.md
 
 # memo
 ## To Do
-- DB上の追加・更新をElasticsearchにも反映させる
-- LogstashとElasticsearchのリソース確認する
-- 既存のDB使う場合に外す・設定する場所の記載
+- ~~DB上の追加・更新をElasticsearchに反映させる~~
+- Logstashのpipelineのstatementがもう少しスマートにならんかなあ
+- ~~LogstashとElasticsearchのリソース確認する~~ logstash, esともに2.0GBぐらい常に使ってるっぽい　一番多いのはmysql……
 - ~~DB上の削除はES上で反映されないのなんとかなんないかな~~今回は元のDBで削除することがないので考える必要がなさそう
 - 無停止でインデックス更新するやつを試す

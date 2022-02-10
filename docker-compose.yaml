@@ -9,12 +9,17 @@ services:
     env_file: mysql.env
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d
+<<<<<<< HEAD
       - mysql_data:/var/lib/mysql
+=======
+      - mysql_data/:/var/lib/mysql
+>>>>>>> monitor_rsrc
     ports:
       - 3306:3306
     # 文字コードを触ったりファイルを読み込むおまじない②を書いています
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --local-infile=1
 
+<<<<<<< HEAD
   # elasticsearch:
   #   container_name: ls_es01
   #   build: 
@@ -56,6 +61,106 @@ services:
   #     - TZ="Asia/Tokyo"
   #   depends_on: 
   #     - elasticsearch
+=======
+  elasticsearch01:
+    container_name: ls_es01
+    build: 
+      context: ./elasticsearch/
+      dockerfile: build/Dockerfile
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es02, ls_es03
+      #- node.master=true
+      #- node.data=true
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Tokyo
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+    logging: 
+      driver: 'json-file'
+      options: 
+        max-size: '10m'
+        max-file: '3'
+    ports: 
+      - "9200:9200"
+    depends_on:
+      - mysql
+    healthcheck:
+      interval: 30s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  elasticsearch02:
+    container_name: ls_es02
+    build: 
+      context: ./elasticsearch/
+      dockerfile: build/Dockerfile
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es01, ls_es03
+      #- node.master=true
+      #- node.data=true
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Tokyo
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+    depends_on:
+      - mysql
+
+  elasticsearch03:
+    container_name: ls_es03
+    build: 
+      context: ./elasticsearch/
+      dockerfile: build/Dockerfile
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01, es02, es03
+      - discovery.seed_hosts=ls_es01, ls_es02
+      #- node.master=true
+      #- node.data=true
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Tokyo
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+    depends_on:
+      - mysql
+
+  logstash:
+    container_name: logstash
+    build: 
+      context: ./logstash/
+      dockerfile: build/Dockerfile
+    ports: 
+      - "9600:9600"
+    env_file: mysql.env
+    environment:
+      - TZ=Asia/Tokyo
+    depends_on: 
+      - elasticsearch01
+      - elasticsearch02
+      - elasticsearch03
+      - mysql
+    volumes:
+      - ./logstash/pipeline/:/usr/share/logstash/pipeline/
+      - ./logstash/config/:/usr/share/logstash/config/
+>>>>>>> monitor_rsrc
 
 volumes:
   mysql_data:
