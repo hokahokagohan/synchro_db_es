@@ -57,9 +57,3 @@
 
 
 # References
-<<<<<<< HEAD
-- [APIから取得したJSONをとりあえずMySQL8.0に入れてJSON_TABLE()でどうにかする - 主夫ときどきプログラマ](https://masayuki14.hatenablog.com/entry/2018/10/17/170000) (最終閲覧日:2022/1/19)
-- [MySQLでJSONを扱う - Qiita](https://qiita.com/abcb2/items/8affae03caa3e94068b5) (最終閲覧日:2022/1/19)
-- [MySQL で CSV, Json データ読み込み - Qiita](https://qiita.com/kkdd/items/eff48e26ed5df03c090b) (最終閲覧日:2022/1/26)
-=======
->>>>>>> monitor_rsrc

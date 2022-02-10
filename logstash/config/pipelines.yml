@@ -1,3 +1,5 @@
-- pipline.id: mysql_pipeline
+- pipeline.id: mysql_pipeline
+  pipeline.batch.size: 125
   path.config: "/usr/share/logstash/pipeline/mysql.conf"
   queue.type: persisted
+  pipeline.workers: 1
