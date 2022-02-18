@@ -96,34 +96,49 @@ docker-compose -f docker-compose.yaml -f docker-compose.ms.yaml up --build
 # Environment 
 
 ## File Structure
+()は.gitignoreしてるやつ
+
 
 ```
 documents/
   ┗preparation.md
 elasticsearch/
-  ┗build/
-      ┗Dockerfile
-mysql/
   ┣build/
-  ┃  ┣Dockerfile
-  ┃  ┣entrypoint.sh
-  ┃  ┗my.cnf
-  ┣init/    # MySQLのコンテナ起動時に実行されるファイル
-  ┃  ┣create_table.sql
-  ┃  ┗(jawiki-20211227-cirrussearch-content.json)   # テスト用のデータ
-  ┗(mysql_data)     # MySQLと同期してるとこ
+  ┃  ┗Dockerfile
+  ┗config/
+      ┗elasticsearch.yml
 logstash/
   ┣build/
   ┃  ┗Dockerfile
+  ┣config/
+  ┃  ┣logstash.yml
+  ┃  ┗pipelines.yml
   ┣(mysql-connector-java-8.0.28)
   ┃  ┣  ︙
   ┃  ┗(mysql-connector-java-8.0.28.jar) # MySQLコネクタ
   ┣pipeline/
-  ┃  ┗log.conf
-  ┗index_template.json    # Elasticsearchのインデックス構造を書いたファイル
+  ┃  ┗mysql.conf    # Logstash→Elasticsearchに流す用の設定
+  ┗jawiki_index.json    # Elasticsearchのインデックス構造を書いたファイル
+monitoring_resources/
+  ┣grafana/   # リソースの使用状況が可視化されるやつ
+  ┃  ┣dashboards/
+  ┃  ┃  ┣dashboard.yaml
+  ┃  ┃  ┗main_rev5.json
+  ┃  ┗datasource.yaml
+  ┗prometheus/   # メトリクス取得するやつ
+      ┗prometheus.yaml
+mysql/
+  ┣build/
+  ┃  ┣Dockerfile
+  ┃  ┗my.cnf
+  ┗init/    # MySQLのコンテナ初回起動時に実行されるファイル
+      ┗1_create_table.sql
+python/
+  ┣(jawiki-20211227-cirrussearch-content.json)    # テスト用データ
+  ┗register_db.py
 (mysql.env)    # 環境変数とか
-docker-compose.yaml
 docker-compose.ms.yaml  # リソース監視する用
+docker-compose.yaml
 README.md
 ```
 
@@ -140,5 +155,7 @@ README.md
 - ~~DB上の追加・更新をElasticsearchに反映させる~~
 - Logstashのpipelineのstatementがもう少しスマートにならんかなあ
 - ~~LogstashとElasticsearchのリソース確認する~~ logstash, esともに2.0GBぐらい常に使ってるっぽい　一番多いのはmysql……
+  - shard:3にしたらlogstashが3.5GB, esが2.0GBぐらい
+  - シャード数はcpuを効率的に使う場合に増やしたほうがいいらしい
 - ~~DB上の削除はES上で反映されないのなんとかなんないかな~~今回は元のDBで削除することがないので考える必要がなさそう
 - 無停止でインデックス更新するやつを試す
