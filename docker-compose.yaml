@@ -21,20 +21,23 @@ services:
       context: ./elasticsearch/
       dockerfile: build/Dockerfile
     environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=es01, es02, es03
-      - discovery.seed_hosts=ls_es02, ls_es03
+      # - node.name=es01
+      # - cluster.name=es-docker-cluster
+      # - cluster.initial_master_nodes=es01
+      # - discovery.seed_hosts=ls_es02, ls_es03
       #- node.master=true
       #- node.data=true
+      - discovery.type=single-node
       - xpack.security.enabled=false
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
       - TZ=Asia/Tokyo
     ulimits: 
       memlock:
         soft: -1
         hard: -1
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     logging: 
       driver: 'json-file'
       options: 
@@ -49,51 +52,51 @@ services:
       retries: 10
       test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
 
-  elasticsearch02:
-    container_name: ls_es02
-    build: 
-      context: ./elasticsearch/
-      dockerfile: build/Dockerfile
-    environment:
-      - node.name=es02
-      - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=es01, es02, es03
-      - discovery.seed_hosts=ls_es01, ls_es03
-      #- node.master=true
-      #- node.data=true
-      - xpack.security.enabled=false
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - TZ=Asia/Tokyo
-    ulimits: 
-      memlock:
-        soft: -1
-        hard: -1
-    depends_on:
-      - mysql
+  # elasticsearch02:
+  #   container_name: ls_es02
+  #   build: 
+  #     context: ./elasticsearch/
+  #     dockerfile: build/Dockerfile
+  #   environment:
+  #     - node.name=es02
+  #     - cluster.name=es-docker-cluster
+  #     - cluster.initial_master_nodes=es01, es02, es03
+  #     - discovery.seed_hosts=ls_es01, ls_es03
+  #     #- node.master=true
+  #     #- node.data=true
+  #     - xpack.security.enabled=false
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - TZ=Asia/Tokyo
+  #   ulimits: 
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   depends_on:
+  #     - mysql
 
-  elasticsearch03:
-    container_name: ls_es03
-    build: 
-      context: ./elasticsearch/
-      dockerfile: build/Dockerfile
-    environment:
-      - node.name=es03
-      - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=es01, es02, es03
-      - discovery.seed_hosts=ls_es01, ls_es02
-      #- node.master=true
-      #- node.data=true
-      - xpack.security.enabled=false
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - TZ=Asia/Tokyo
-    ulimits: 
-      memlock:
-        soft: -1
-        hard: -1
-    depends_on:
-      - mysql
+  # elasticsearch03:
+  #   container_name: ls_es03
+  #   build: 
+  #     context: ./elasticsearch/
+  #     dockerfile: build/Dockerfile
+  #   environment:
+  #     - node.name=es03
+  #     - cluster.name=es-docker-cluster
+  #     - cluster.initial_master_nodes=es01, es02, es03
+  #     - discovery.seed_hosts=ls_es01, ls_es02
+  #     #- node.master=true
+  #     #- node.data=true
+  #     - xpack.security.enabled=false
+  #     - bootstrap.memory_lock=true
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - TZ=Asia/Tokyo
+  #   ulimits: 
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   depends_on:
+  #     - mysql
 
   logstash:
     container_name: logstash
@@ -107,8 +110,8 @@ services:
       - TZ=Asia/Tokyo
     depends_on: 
       - elasticsearch01
-      - elasticsearch02
-      - elasticsearch03
+      # - elasticsearch02
+      # - elasticsearch03
       - mysql
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/

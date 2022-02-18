@@ -1,4 +1,5 @@
 {
+  "index_patterns": "jawiki_index",
   "settings": {
       "index" : {
         "number_of_shards": 3,
