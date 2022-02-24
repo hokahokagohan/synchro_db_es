@@ -38,7 +38,7 @@ Logstashは定期的(今回の設定は1分おき)にRDBのデータを確認し
 
     ※LogstashからMySQLに接続する際、SELECT以上の権限を持つユーザーでログインする必要があります。root以外のユーザーでログインするときは`logstash/pipeline/mysql.conf`の`jdbc_user`と`jdbc_password`を変更してください。この場合MYSQL_ROOT_PASSWORDは記載不要です。
 
-2. データベースから取りたいデータに応じて下記の編集してください。
+2. データベースから取りたいデータに応じて下記を編集してください。
     - `./logstash/pipeline/mysql.conf`の`statement`
     - `./logstash/jawiki_index.json`の`mappings`内
 
@@ -90,7 +90,8 @@ docker-compose up --build
 docker-compose -f docker-compose.yaml -f docker-compose.ms.yaml up --build
 ```
 
-- http://localhost:3300/ から各コンテナのリソース使用状況が確認できる
+- http://localhost:3000/ から各コンテナのリソース使用状況が確認できる
+  - ユーザー名・パスワードはともに`admin`
 
 
 # Environment 
@@ -155,7 +156,8 @@ README.md
 - ~~DB上の追加・更新をElasticsearchに反映させる~~
 - Logstashのpipelineのstatementがもう少しスマートにならんかなあ
 - ~~LogstashとElasticsearchのリソース確認する~~ logstash, esともに2.0GBぐらい常に使ってるっぽい　一番多いのはmysql……
-  - shard:3にしたらlogstashが3.5GB, esが2.0GBぐらい
+  - shard:3にしたらlogstashが4.5GB, esが2.0GBぐらい
   - シャード数はcpuを効率的に使う場合に増やしたほうがいいらしい
 - ~~DB上の削除はES上で反映されないのなんとかなんないかな~~今回は元のDBで削除することがないので考える必要がなさそう
 - 無停止でインデックス更新するやつを試す
+- 関連度スコアをわかりやすいかたちに出力できないか試す
