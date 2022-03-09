@@ -1,4 +1,4 @@
-# Realtime Synchronize Elasticsearch on Database
+# Realtime Synchronize Elasticsearch with Database
 頼むンゴねえ
 
 - [Realtime Synchronize Database on Elasticsearch](#realtime-synchronize-database-on-elasticsearch)
