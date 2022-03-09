@@ -36,8 +36,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    # volumes:
+    #   - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     logging: 
       driver: 'json-file'
       options: 
@@ -51,52 +51,6 @@ services:
       interval: 30s
       retries: 10
       test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
-
-  # elasticsearch02:
-  #   container_name: ls_es02
-  #   build: 
-  #     context: ./elasticsearch/
-  #     dockerfile: build/Dockerfile
-  #   environment:
-  #     - node.name=es02
-  #     - cluster.name=es-docker-cluster
-  #     - cluster.initial_master_nodes=es01, es02, es03
-  #     - discovery.seed_hosts=ls_es01, ls_es03
-  #     #- node.master=true
-  #     #- node.data=true
-  #     - xpack.security.enabled=false
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #     - TZ=Asia/Tokyo
-  #   ulimits: 
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   depends_on:
-  #     - mysql
-
-  # elasticsearch03:
-  #   container_name: ls_es03
-  #   build: 
-  #     context: ./elasticsearch/
-  #     dockerfile: build/Dockerfile
-  #   environment:
-  #     - node.name=es03
-  #     - cluster.name=es-docker-cluster
-  #     - cluster.initial_master_nodes=es01, es02, es03
-  #     - discovery.seed_hosts=ls_es01, ls_es02
-  #     #- node.master=true
-  #     #- node.data=true
-  #     - xpack.security.enabled=false
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #     - TZ=Asia/Tokyo
-  #   ulimits: 
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   depends_on:
-  #     - mysql
 
   logstash:
     container_name: logstash
@@ -116,6 +70,7 @@ services:
     volumes:
       - ./logstash/pipeline/:/usr/share/logstash/pipeline/
       - ./logstash/config/:/usr/share/logstash/config/
+      - ./logstash/index_template/:/index_template/
 
 volumes:
   mysql_data:

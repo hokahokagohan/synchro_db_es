@@ -1,0 +1,65 @@
+{
+  "index_patterns": "jawiki_index",
+  "aliases": {
+    "jawiki_articles": {}
+  },
+  "settings": {
+      "index" : {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+      },
+
+      "analysis" : {
+        "analyzer" : {
+          "morph-analyzer" : {
+            "type" : "custom",
+            "tokenizer": "morph-tokenizer",
+            "char_filter" : ["icu_normalizer"],
+            "filter": ["kuromoji_stemmer", "pos_filter"]
+            },
+          "ngram-analyzer": {
+            "type": "custom",
+            "tokenizer": "ngram-tokenizer",
+            "char_filter" : ["icu_normalizer"],
+            "filter": ["kuromoji_stemmer"]
+            }
+          },
+        "tokenizer": {
+          "morph-tokenizer": {
+            "type": "kuromoji_tokenizer",
+            "mode": "normal"
+            },
+          "ngram-tokenizer": {
+            "type": "ngram",
+            "min_gram": "2",
+            "max_gram": "3"
+            }
+          },
+          "filter":{
+            "pos_filter": {
+              "type": "kuromoji_part_of_speech"
+            }
+          }
+        }
+    },
+
+    "mappings": {
+      "properties": {
+        "title": {
+          "type": "text",
+          "analyzer": "morph-analyzer",
+          "search_analyzer": "morph-analyzer"
+        },
+        "text_morph": {
+          "type": "text",
+          "analyzer": "morph-analyzer",
+          "search_analyzer": "morph-analyzer"
+        },
+        "text_ngram": {
+          "type": "text",
+          "analyzer": "ngram-analyzer",
+          "search_analyzer": "ngram-analyzer"
+        }
+    }
+  }
+}

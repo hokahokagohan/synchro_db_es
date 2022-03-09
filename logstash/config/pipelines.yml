@@ -1,5 +1,10 @@
 - pipeline.id: mysql_pipeline
-  pipeline.batch.size: 125
+  pipeline.batch.size: 50
   path.config: "/usr/share/logstash/pipeline/mysql.conf"
   queue.type: memory
-  pipeline.workers: 2
+  pipeline.workers: 4
+# - pipeline.id: mysql_220225
+#   pipeline.batch.size: 125
+#   path.config: "/usr/share/logstash/pipeline/mysql_220225.conf"
+#   queue.type: memory
+#   pipeline.workers: 2

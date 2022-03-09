@@ -7,8 +7,10 @@
   - [Elasticsearch](#elasticsearch)
   - [Logstash](#logstash)
 
+---
+
 ## Elasticsearch
-*「[logstash.outputs.elasticsearch][main] Failed to install template {:message=>"Got response code '400' contacting Elasticsearch at URL ...」が出た*
+**1.「[logstash.outputs.elasticsearch][main] Failed to install template {:message=>"Got response code '400' contacting Elasticsearch at URL ...」が出た**
 
 [Unclear and very verbose status 400 messages when Logstash hits a Elasticsearch mapping error during inserts · Issue #333 · logstash-plugins/logstash-output-elasticsearch](https://github.com/logstash-plugins/logstash-output-elasticsearch/issues/333#issuecomment-282274531)
 
@@ -18,10 +20,12 @@
 ---
 
 ## Logstash
-*「[ERROR][logstash.agent] Failed to execute action {:action=>LogStash::PipelineAction::Create/pipeline_id:main, :exception=>"LogStash::ConfigurationError", :message=>"Expected one of [ \\t\\r\\n], \"#\", \"input\", \"filter\", \"output\" at line 1, column 1 (byte 1)" ...」が出た*
+**1.「[ERROR][logstash.agent] Failed to execute action {:action=>LogStash::PipelineAction::Create/pipeline_id:main, :exception=>"LogStash::ConfigurationError", :message=>"Expected one of [ \\t\\r\\n], \"#\", \"input\", \"filter\", \"output\" at line 1, column 1 (byte 1)" ...」が出た**
 
-pipelineに使っている`.conf`にホワイトスペースが混じっていたのが原因  
+pipelineに使っている`.conf`にホワイトスペースが混じっていたのが原因だった  
 VSCodeの拡張機能の[Gremlins](https://marketplace.visualstudio.com/items?itemName=nhoizey.gremlins)を使って削除
 
 
+
+**2. JDBC inputプラグインの"jdbc_paging_size"と"jdbc_fetch_size"の違い**
 

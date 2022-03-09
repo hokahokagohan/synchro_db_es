@@ -52,6 +52,3 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
-  
-volumes:
-  mysql_data:
