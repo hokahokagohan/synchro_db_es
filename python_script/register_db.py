@@ -34,6 +34,7 @@ with open('python/jawiki-20211227-cirrussearch-content.json', 'r') as f:
       docs.append((count, doc['title'], doc['text']))
       count += 1
       
+      # 1000件ごとにバルクインサート
       if count % 1000 == 0:
         try:
           cursor.executemany(sql, docs)
@@ -57,3 +58,6 @@ cursor.close()
 
 print(f'time: {float(time()- start_time):.5f}')
 print('Complete.')
+
+import gc
+gc.collect()

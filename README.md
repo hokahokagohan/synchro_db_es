@@ -148,16 +148,20 @@ README.md
 # References
 - [Elasticsearchクラスターのデータベースデータのリアルタイム同期（mysql） - コードワールド](https://www.codetd.com/ja/article/11891206) (最終閲覧日:2022/1/19)
 - [LogstashおよびJDBCを使用してElasticsearchとRDBMSの同期を維持する方法 | Elastic Blog](https://www.elastic.co/jp/blog/how-to-keep-elasticsearch-synchronized-with-a-relational-database-using-logstash) (最終閲覧日:2022/1/19)
-  
+- [Elasticsearchの負荷テストにはRallyを使おう - Qiita](https://qiita.com/kinshotomoya/items/208c799aa695a073d33b) (最終閲覧日:2022/3/10)
+
 ---
 
 # memo
 ## To Do
 - ~~DB上の追加・更新をElasticsearchに反映させる~~
-- Logstashのpipelineのstatementがもう少しスマートにならんかなあ
-- ~~LogstashとElasticsearchのリソース確認する~~ logstash, esともに2.0GBぐらい常に使ってるっぽい　一番多いのはmysql……
+- ~~Logstashのpipelineのstatementがもう少しスマートにならんかなあ~~
+- ~~LogstashとElasticsearchのリソース確認する~~ 
+  - logstash, esともに2.0GBぐらい常に使ってるっぽい　一番多いのはmysql……
   - shard:3にしたらlogstashが4.5GB, esが2.0GBぐらい
-  - シャード数はcpuを効率的に使う場合に増やしたほうがいいらしい
-- ~~DB上の削除はES上で反映されないのなんとかなんないかな~~今回は元のDBで削除することがないので考える必要がなさそう
+  - ~~シャード数はcpuを効率的に使う場合に増やしたほうがいいらしい~~
+  - シングルノードならRAID構成にしてないとシャードに分ける意味ないっぽい
+- ~~DB上の削除はES上で反映されないのなんとかなんないかな~~
+  - 今回は元のDBで削除することがないので考える必要がなさそう
 - 無停止でインデックス更新するやつを試す
 - 関連度スコアをわかりやすいかたちに出力できないか試す

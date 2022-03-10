@@ -1,0 +1,73 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Tracker-generated track for test",
+  "indices": [
+    {
+      "name": "jawiki_articles",
+      "body": "jawiki_articles.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "jawiki_articles",
+      "documents": [
+        {
+          "target-index": "jawiki_articles",
+          "source-file": "jawiki_articles-documents.json.bz2",
+          "document-count": 1306062,
+          "compressed-bytes": 2843578876,
+          "uncompressed-bytes": 25996493500
+        }
+      ]
+    }
+  ],
+  "schedule": [
+    {
+      "parallel": {
+        "tasks": [
+          {
+            "name": "health",
+            "operation": {
+              "operation_type": "cluster-health",
+              "index": "jawiki_articles",
+              "request-params": {
+                "wait_for_status": "{{cluster_health | default('green')}}",
+                "wait_for_no_relocating_shards": "true"
+              },
+              "retry-until-success": true
+            }
+          },
+          {
+            "name": "index",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": 10000
+            }
+          },
+          {
+            "name": "search",
+            "operation": {
+              "name": "search",
+              "operation-type": "search",
+              "body": {
+                "query": {
+                  "match_all": {}
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    }
+  ]
+}
