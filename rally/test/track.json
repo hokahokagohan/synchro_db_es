@@ -24,43 +24,6 @@
   ],
   "schedule": [
     {
-      "parallel": {
-        "tasks": [
-          {
-            "name": "health",
-            "operation": {
-              "operation_type": "cluster-health",
-              "index": "jawiki_articles",
-              "request-params": {
-                "wait_for_status": "{{cluster_health | default('green')}}",
-                "wait_for_no_relocating_shards": "true"
-              },
-              "retry-until-success": true
-            }
-          },
-          {
-            "name": "index",
-            "operation": {
-              "operation-type": "bulk",
-              "bulk-size": 10000
-            }
-          },
-          {
-            "name": "search",
-            "operation": {
-              "name": "search",
-              "operation-type": "search",
-              "body": {
-                "query": {
-                  "match_all": {}
-                }
-              }
-            }
-          }
-        ]
-      }
-    }
-    {
       "operation": "delete-index"
     },
     {
@@ -68,6 +31,25 @@
         "operation-type": "create-index",
         "settings": {{index_settings | default({}) | tojson}}
       }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "jawiki_articles",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+      },
+      "clients": {{bulk_indexing_clients | default(8)}}
     }
   ]
 }

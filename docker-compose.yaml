@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+  ## 既存のDBを使用する場合は以下をコメントアウト
   mysql:
     container_name: jawiki_db
     build:
@@ -14,6 +15,8 @@ services:
       - 3306:3306
     # 文字コードを触ったりファイルを読み込むおまじない②を書いています
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --local-infile=1
+  ## コメントアウトここまで
+  ## このファイルの最後のvolumesもコメントアウトしてください
 
   elasticsearch01:
     container_name: ls_es01
@@ -72,5 +75,7 @@ services:
       - ./logstash/config/:/usr/share/logstash/config/
       - ./logstash/index_template/:/index_template/
 
+
+## 既存のDBを使用する場合は以下をコメントアウト
 volumes:
   mysql_data:

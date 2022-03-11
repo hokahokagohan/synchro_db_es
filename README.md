@@ -11,6 +11,8 @@
 - [Build](#build)
   - [とりあえず試す場合](#とりあえず試す場合)
   - [リソースの監視をする場合](#リソースの監視をする場合)
+- [Test](#test)
+  - [Elasticsearchの負荷テスト](#elasticsearchの負荷テスト)
 - [Environment](#environment)
   - [File Structure](#file-structure)
 - [References](#references)
@@ -19,7 +21,7 @@
 
 ## Summary
 
-Logstashは定期的(今回の設定は1分おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードのみをElasticsearchに反映します。
+Logstashは定期的(今回の設定は30秒おき)にRDBのデータを確認し、最後に実行した時間とRDBの各レコードの`refixdate`を比較して、追加・更新のあったレコードのみをElasticsearchに反映します。
 
 
 # Preparation
@@ -37,8 +39,8 @@ Logstashは定期的(今回の設定は1分おき)にRDBのデータを確認し
     ```
 
     ※LogstashからMySQLに接続する際、SELECT以上の権限を持つユーザーでログインする必要があります。root以外のユーザーでログインするときは`logstash/pipeline/mysql.conf`の`jdbc_user`と`jdbc_password`を変更してください。この場合MYSQL_ROOT_PASSWORDは記載不要です。
-
-2. データベースから取りたいデータに応じて下記を編集してください。
+2. `docker-compose.yaml`から`mysql`と`volumes`のブロックをコメントアウトしてください。
+3. データベースから取ってElasticsearchに流したいデータに応じて下記を編集してください。
     - `./logstash/pipeline/mysql.conf`の`statement`
     - `./logstash/jawiki_index.json`の`mappings`内
 
@@ -92,6 +94,31 @@ docker-compose -f docker-compose.yaml -f docker-compose.ms.yaml up --build
 
 - http://localhost:3000/ から各コンテナのリソース使用状況が確認できる
   - ユーザー名・パスワードはともに`admin`
+- `docker stats`でもこういうのは見れる
+  ![](document/img/dockerstats.png)
+
+# Test
+## Elasticsearchの負荷テスト
+`Rally` ([GitHub](https://github.com/elastic/rally) / [公式ドキュメント](https://esrally.readthedocs.io/en/stable/index.html))を使用。  
+実験環境ではホストに`pip install esrally`でインストールしたほうが手間が少ないと判断しましたが、公式でDockerイメージも提供されているのでそちらを利用するのも手。  
+*dockerを利用する場合はコンテナ内に入っておくことと、以下の説明等において適切なElasticsearchのアドレスに置き換えるよう留意してください。*
+
+1. テスト用のデータを作成します。
+
+    ```
+    esrally create-track --track=test --target-hosts=localhost:9200 --indices="jawiki_articles" --output-path=./rally
+    ```
+
+    `./rally/test`に以下のファイルが作成されます。
+
+    ```
+    jawiki_articles-documents-1k.json      jawiki_articles-documents.json      jawiki_articles-documents.json.offset  track.json
+    jawiki_articles-documents-1k.json.bz2  jawiki_articles-documents.json.bz2  jawiki_articles.json                   
+    ```
+
+2. `track.json`をよしなに編集します。
+
+
 
 
 # Environment 
